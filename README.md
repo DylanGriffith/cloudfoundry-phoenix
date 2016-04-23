@@ -30,7 +30,7 @@ Then edit the prod config like so:
  # which should be versioned separately.
 -import_config "prod.secret.exs"
 +
-+config :talk_rabbit_frontend, TalkRabbitFrontend.Endpoint,
++config :my_app, MyApp.Endpoint,
 +  secret_key_base: System.get_env("SECRET_KEY_BASE") || "abc123"
 ```
 
@@ -73,7 +73,7 @@ and reference it in the config using `System.get_env("APP_URL")` like so:
 +++ b/config/prod.exs
 @@ -13,7 +13,7 @@ use Mix.Config
  # which you typically run after static files are built.
- config :talk_rabbit_frontend, TalkRabbitFrontend.Endpoint,
+ config :my_app, MyApp.Endpoint,
    http: [port: {:system, "PORT"}],
 -  url: [host: "example.com", port: 80],
 +  url: [host: System.get_env("APP_URL"), port: 80],
