@@ -66,4 +66,46 @@ You will need to manually set some env var for this:
 cf set-env APP_URL myapp.cfapps.io
 ```
 
-and reference it in the config using `System.get_env("APP_URL")`.
+and reference it in the config using `System.get_env("APP_URL")` like so:
+
+```diff
+--- a/config/prod.exs
++++ b/config/prod.exs
+@@ -13,7 +13,7 @@ use Mix.Config
+ # which you typically run after static files are built.
+ config :talk_rabbit_frontend, TalkRabbitFrontend.Endpoint,
+   http: [port: {:system, "PORT"}],
+-  url: [host: "example.com", port: 80],
++  url: [host: System.get_env("APP_URL"), port: 80],
+   cache_static_manifest: "priv/static/manifest.json",
+   server: true
+```
+
+### Uploading tonnes of files
+Add the following to a `.cfignore` file.
+
+```
+/_build
+/db
+/deps
+/*.ez
+erl_crash.dump
+/node_modules
+/rel
+```
+
+### Static assets are not available
+
+You may notice:
+
+```
+[error] Could not find static manifest at "/home/vcap/app/_build/prod/lib/drivethrough/priv/static/manifest.json". Run "mix phoenix.digest" after building your static files or remove the configuration from "config/prod.exs."
+```
+
+Assuming you are using the `.cfignore` I referred to above you can build your assets locally before pushing to cloud foundry. Try the following to deploy:
+
+```
+MIX_ENV=prod mix phoenix.digest && cf push
+```
+
+If this doesn't fix the problem make sure that you don't have `/priv/static` in your `.cfignore` file.
