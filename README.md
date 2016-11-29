@@ -5,7 +5,15 @@ Be sure to always keep `cf logs <app-name>` running when deploying your new app.
 
 ## Known issues
 
-### `prod.secrets.exs` is not available
+### Too Many Database Connections
+You will probably need to configure a lower database connection count for CF. This is currently configured in the `prod.secret.exs` file to be 20. You should just delete `prod.secret.exs` since it will cause you other problems (see below). Then configure the pool size in `prod.exs` like so: 
+
+```elixir
+config :racing_sites, RacingSites.Repo,
+  pool_size: String.to_integer(System.get_env("POOL_SIZE") || "1")
+```
+
+### `prod.secret.exs` is not available
 
 You may notice:
 ```
@@ -56,7 +64,7 @@ and reference it in the config using like so:
 config :my_app, MyApp.Repo,
   adapter: Ecto.Adapters.Postgres,
   url: System.get_env("DATABASE_URL"),
-  pool_size: 20
+  pool_size: String.to_integer(System.get_env("POOL_SIZE") || "1")
 ```
 
 ### App URL cannot be accessed in VCAP_APPLICATION
