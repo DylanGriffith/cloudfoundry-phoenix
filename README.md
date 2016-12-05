@@ -113,6 +113,7 @@ You may notice:
 Assuming you are using the `.cfignore` I referred to above you can build your assets locally before pushing to cloud foundry. Try the following to deploy:
 
 ```
+brunch build --production
 MIX_ENV=prod mix phoenix.digest && cf push
 ```
 
